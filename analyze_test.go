@@ -28,14 +28,6 @@ var analyzeTests = []testpair{
 	{"", []string{}},
 }
 
-var ngramTests = []ngramTestPair{
-	{[]string{"jonathan"}, []string{"jonathan"}},
-	{[]string{"jonathan", "summer"}, []string{"jonathan", "jonathan_summer", "summer"}},
-	{[]string{"societe", "generale"}, []string{"generale", "societe", "societe_generale"}},
-	{[]string{"16", "handles"}, []string{"16_handles", "handles"}},
-	{[]string{}, []string{}},
-}
-
 func TestAnalyze(t *testing.T) {
 	for _, pair := range analyzeTests {
 		got := Analyze(pair.input)
@@ -49,9 +41,38 @@ func TestAnalyze(t *testing.T) {
 	}
 }
 
+var ngramTests = []ngramTestPair{
+	{[]string{"jonathan"}, []string{"jonathan"}},
+	{[]string{"jonathan", "summer"}, []string{"jonathan", "jonathan_summer", "summer"}},
+	{[]string{"societe", "generale"}, []string{"generale", "societe", "societe_generale"}},
+	{[]string{"16", "handles"}, []string{"16_handles", "handles"}},
+	{[]string{}, []string{}},
+}
+
 func TestUnigramsAndBigrams(t *testing.T) {
 	for _, pair := range ngramTests {
 		got := UnigramsAndBigrams(pair.input)
+		if !reflect.DeepEqual(got, pair.output) {
+			t.Error(
+				"For", pair.input,
+				"expected", pair.output,
+				"got", got,
+			)
+		}
+	}
+}
+
+var urlAnalyzeTests = []testpair{
+	{"www.veritypartners.com", []string{"veritypartners.com"}},
+	{"http://www.veritypartners.com", []string{"veritypartners.com"}},
+	{"http://www.veritypartners.com/foo/bar.html", []string{"veritypartners.com"}},
+	{"http://www.veritypartners.com/foo/bar.html?q=%20foo%", []string{"veritypartners.com"}},
+	{"http://www.veritypartners.com:2000/foo/bar.html?q=%20foo%", []string{"veritypartners.com"}},
+}
+
+func TestURLAnalyze(t *testing.T) {
+	for _, pair := range urlAnalyzeTests {
+		got := URLAnalyze(pair.input)
 		if !reflect.DeepEqual(got, pair.output) {
 			t.Error(
 				"For", pair.input,

@@ -2,6 +2,8 @@ package stringy
 
 import (
 	"fmt"
+	"net"
+	"net/url"
 	"os"
 	"regexp"
 	"sort"
@@ -15,8 +17,9 @@ import (
 )
 
 var (
-	punctuation = regexp.MustCompile(`[\p{P}\p{S}]`)
-	onlyNumbers = regexp.MustCompile(`^[0-9,.]+$`)
+	punctuation   = regexp.MustCompile(`[\p{P}\p{S}]`)
+	onlyNumbers   = regexp.MustCompile(`^[0-9,.]+$`)
+	domainPattern = regexp.MustCompile(`(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])+`)
 )
 
 func isMn(r rune) bool {
@@ -42,6 +45,50 @@ func Analyze(in string) (tokens []string) {
 		if len(t3) > 0 {
 			tokens = append(tokens, strings.ToLower(unidecode.Unidecode(t3)))
 		}
+	}
+	return
+}
+
+func hostByRegex(in string) []string {
+	m := domainPattern.FindAllString(in, 1)
+	if len(m) == 0 {
+		return []string{}
+	}
+	host := trimWWWPrefix(m[0])
+	if !strings.Contains(host, ".") {
+		return []string{}
+	}
+	return []string{host}
+}
+
+func trimWWWPrefix(in string) string {
+	return strings.TrimPrefix(in, "www.")
+}
+
+func URLAnalyze(in string) (tokens []string) {
+	tokens = make([]string, 0)
+	raw := strings.TrimSpace(in)
+	if len(raw) < 1 {
+		return
+	}
+	u, err := url.Parse(raw)
+	if err != nil || len(u.Host) < 1 {
+		// fallback to regex
+		return hostByRegex(raw)
+	}
+	host, _, err := net.SplitHostPort(u.Host)
+	if err != nil {
+		h := strings.TrimPrefix(u.Host, "www.")
+		if len(h) > 0 {
+			tokens = append(tokens, h)
+			return
+		}
+		return
+	}
+	h := strings.TrimPrefix(host, "www.")
+	if len(h) > 0 {
+		tokens = append(tokens, h)
+		return
 	}
 	return
 }
