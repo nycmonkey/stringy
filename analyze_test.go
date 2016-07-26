@@ -24,6 +24,7 @@ var analyzeTests = []testpair{
 	{"pOOpsicLe", []string{"poopsicle"}},
 	{"2Legit2Quit!", []string{"2legit2quit"}},
 	{"über Spaß", []string{"uber", "spass"}},
+	{"16 Handles", []string{"16", "handles"}},
 	{"", []string{}},
 }
 
@@ -31,6 +32,7 @@ var ngramTests = []ngramTestPair{
 	{[]string{"jonathan"}, []string{"jonathan"}},
 	{[]string{"jonathan", "summer"}, []string{"jonathan", "jonathan_summer", "summer"}},
 	{[]string{"societe", "generale"}, []string{"generale", "societe", "societe_generale"}},
+	{[]string{"16", "handles"}, []string{"16_handles", "handles"}},
 	{[]string{}, []string{}},
 }
 

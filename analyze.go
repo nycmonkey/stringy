@@ -16,6 +16,7 @@ import (
 
 var (
 	punctuation = regexp.MustCompile(`[\p{P}\p{S}]`)
+	onlyNumbers = regexp.MustCompile(`^[0-9,.]+$`)
 )
 
 func isMn(r rune) bool {
@@ -49,6 +50,9 @@ func Analyze(in string) (tokens []string) {
 func UnigramsAndBigrams(tokens []string) (ngrams []string) {
 	set := make(map[string]bool)
 	for _, t := range tokens {
+		if onlyNumbers.MatchString(t) {
+			continue
+		}
 		set[t] = true
 	}
 	for i := 1; i < len(tokens); i++ {
