@@ -9,6 +9,7 @@ import (
 	"sort"
 	"strings"
 	"unicode"
+	"unicode/utf8"
 
 	"github.com/fiam/gounidecode/unidecode"
 
@@ -34,17 +35,19 @@ func Analyze(in string) (tokens []string) {
 			fmt.Fprintln(os.Stderr, "Offending input:", in)
 		}
 	}()
-	var normalization = transform.Chain(norm.NFD, transform.RemoveFunc(isMn), norm.NFC)
 	tokens = make([]string, 0)
 	for _, t := range strings.Fields(in) {
 		t2 := punctuation.ReplaceAllString(t, "")
 		if len(t2) < 1 {
 			continue
 		}
-		t3, _, _ := transform.String(normalization, t2)
-		if len(t3) > 0 {
-			tokens = append(tokens, strings.ToLower(unidecode.Unidecode(t3)))
+		if len(t2) == utf8.RuneCountInString(t2) {
+			tokens = append(tokens, strings.ToLower(t2))
+			continue
 		}
+		var normalization = transform.Chain(norm.NFD, transform.RemoveFunc(isMn), norm.NFC)
+		t3, _, _ := transform.String(normalization, t2)
+		tokens = append(tokens, strings.ToLower(unidecode.Unidecode(t3)))
 	}
 	return
 }
