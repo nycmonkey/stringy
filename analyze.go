@@ -18,7 +18,10 @@ import (
 )
 
 var (
+	abbreviation  = regexp.MustCompile(`\b(?:[a-zA-Z]\.){2,}`)
 	punctuation   = regexp.MustCompile(`[\p{P}\p{S}]`)
+	possessives   = regexp.MustCompile(`([a-zA-Z]+['’][a-zA-Z]+)`)
+	apostrophes   = regexp.MustCompile(`['’]`)
 	onlyNumbers   = regexp.MustCompile(`^[0-9,.]+$`)
 	domainPattern = regexp.MustCompile(`(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])+`)
 )
@@ -49,6 +52,49 @@ func Analyze(in string) (tokens []string) {
 		t3, _, _ := transform.String(normalization, t2)
 		tokens = append(tokens, strings.ToLower(unidecode.Unidecode(t3)))
 	}
+	return
+}
+
+// MSAnalyze normalizes and tokenizes a given input stream according to rules reverse engineered to match
+// what MS SQL Server full text indexer does
+func MSAnalyze(in string) (tokens []string) {
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Fprintln(os.Stderr, "RECOVERED FROM", r)
+			fmt.Fprintln(os.Stderr, "Offending input:", in)
+		}
+	}()
+	for _, abbr := range abbreviation.FindAllString(in, -1) {
+		abbrSansPeriods := punctuation.ReplaceAllString(abbr, "")
+		in = strings.Replace(in, abbr, abbrSansPeriods, -1)
+	}
+	for _, quotation := range possessives.FindAllString(in, -1) {
+		tempSub := apostrophes.ReplaceAllString(quotation, "qlqlql")
+		in = strings.Replace(in, quotation, tempSub, -1)
+	}
+	in = punctuation.ReplaceAllString(in, " ")
+	in = strings.Replace(in, "qlqlql", "'", -1)
+	tokens = make([]string, 0)
+	for _, t := range strings.Fields(in) {
+		tokens = append(tokens, strings.ToLower(t))
+	}
+	return
+}
+
+// Shingles returns a sorted array of shingle combinations for the given input
+func Shingles(tokens []string) (result []string) {
+	if len(tokens) == 0 {
+		return []string{}
+	}
+	if len(tokens) == 1 {
+		return tokens
+	}
+	for shingleLen := 1; shingleLen <= len(tokens); shingleLen++ {
+		for startIdx := 0; startIdx <= len(tokens)-shingleLen; startIdx++ {
+			result = append(result, strings.Join(tokens[startIdx:startIdx+shingleLen], "_"))
+		}
+	}
+	sort.Strings(result)
 	return
 }
 

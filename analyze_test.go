@@ -41,6 +41,34 @@ func TestAnalyze(t *testing.T) {
 	}
 }
 
+var mssqlAnalyzeTests = []testpair{
+	{"Jonathan", []string{"jonathan"}},
+	{"Jonathan Summer", []string{"jonathan", "summer"}},
+	{"žůžo", []string{"žůžo"}},
+	{"Société Générale", []string{"société", "générale"}},
+	{"I don't care!  You are stUpid...", []string{"i", "don't", "care", "you", "are", "stupid"}},
+	{"amazon.com", []string{"amazon", "com"}},
+	{"amazon.com, inc.", []string{"amazon", "com", "inc"}},
+	{"J.C. Penney", []string{"jc", "penney"}},
+	{"J. C. Penney", []string{"j", "c", "penney"}},
+	{"Heath/Bar foo.bar", []string{"heath", "bar", "foo", "bar"}},
+	{"H.R.M. The Queen", []string{"hrm", "the", "queen"}},
+	{"", []string{}},
+}
+
+func TestMSAnalyze(t *testing.T) {
+	for _, pair := range mssqlAnalyzeTests {
+		got := MSAnalyze(pair.input)
+		if !reflect.DeepEqual(got, pair.output) {
+			t.Error(
+				"For", pair.input,
+				"expected", pair.output,
+				"got", got,
+			)
+		}
+	}
+}
+
 var ngramTests = []ngramTestPair{
 	{[]string{"jonathan"}, []string{"jonathan"}},
 	{[]string{"jonathan", "summer"}, []string{"jonathan", "jonathan_summer", "summer"}},
@@ -52,6 +80,26 @@ var ngramTests = []ngramTestPair{
 func TestUnigramsAndBigrams(t *testing.T) {
 	for _, pair := range ngramTests {
 		got := UnigramsAndBigrams(pair.input)
+		if !reflect.DeepEqual(got, pair.output) {
+			t.Error(
+				"For", pair.input,
+				"expected", pair.output,
+				"got", got,
+			)
+		}
+	}
+}
+
+var shingleTests = []ngramTestPair{
+	{[]string{"jonathan"}, []string{"jonathan"}},
+	{[]string{"jonathan", "summer"}, []string{"jonathan", "jonathan_summer", "summer"}},
+	{[]string{"c", "b", "a"}, []string{"a", "b", "b_a", "c", "c_b", "c_b_a"}},
+	{[]string{}, []string{}},
+}
+
+func TestShingles(t *testing.T) {
+	for _, pair := range shingleTests {
+		got := Shingles(pair.input)
 		if !reflect.DeepEqual(got, pair.output) {
 			t.Error(
 				"For", pair.input,
