@@ -114,9 +114,11 @@ func trimWWWPrefix(in string) string {
 	return strings.TrimPrefix(in, "www.")
 }
 
+// URLAnalyze attempts to normalize a URL to a simple host name
+// or returns an empty slice
 func URLAnalyze(in string) (tokens []string) {
 	tokens = make([]string, 0)
-	raw := strings.TrimSpace(in)
+	raw := strings.ToLower(strings.TrimSpace(in))
 	if len(raw) < 1 {
 		return
 	}
@@ -161,5 +163,37 @@ func UnigramsAndBigrams(tokens []string) (ngrams []string) {
 		i++
 	}
 	sort.Strings(ngrams)
+	return
+}
+
+// Bigrams returns the unique token bigrams for a given ordered list of string tokens
+func Bigrams(tokens []string) (bigrams sort.StringSlice) {
+	switch len(tokens) {
+	case 0:
+		return
+	case 1:
+		return tokens
+	case 2:
+		return []string{tokens[0] + "_" + tokens[1]}
+	}
+	for i := 1; i < len(tokens); i++ {
+		token := tokens[i-1] + "_" + tokens[i]
+		l := len(bigrams)
+		if l == 0 {
+			bigrams = append(bigrams, token)
+			continue
+		}
+		idx := bigrams.Search(token)
+		if idx < l && bigrams[idx] == token {
+			// already present
+			continue
+		}
+		if idx == l {
+			return append(bigrams, token)
+		}
+		bigrams = append(bigrams, "")
+		copy(bigrams[idx+1:], bigrams[idx:])
+		bigrams[idx] = token
+	}
 	return
 }
