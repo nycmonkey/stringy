@@ -130,3 +130,28 @@ func TestURLAnalyze(t *testing.T) {
 		}
 	}
 }
+
+var characterTrigramTests = []testpair{
+	{"dog", []string{"$do", "dog", "og$"}},
+	{"dogs", []string{"$do", "dog", "ogs", "gs$"}},
+	{"do", []string{"$do", "do$"}},
+	{"", nil},
+	{"d", []string{"$d$"}},
+	{"the_band", []string{"$th", "the", "he_", "e_b", "_ba", "ban", "and", "nd$"}},
+	{"lucky 7", []string{"$lu", "luc", "uck", "cky", "ky ", "y 7", " 7$"}},
+	{"T", []string{"$T$"}},
+	{"AAPL", []string{"$AA", "AAP", "APL", "PL$"}},
+}
+
+func TestCharacterTrigrams(t *testing.T) {
+	for _, pair := range characterTrigramTests {
+		got := CharacterTrigrams(pair.input)
+		if !reflect.DeepEqual(got, pair.output) {
+			t.Error(
+				"For", pair.input,
+				"expected", pair.output,
+				"got", got,
+			)
+		}
+	}
+}

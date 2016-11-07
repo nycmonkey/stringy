@@ -24,6 +24,7 @@ var (
 	apostrophes   = regexp.MustCompile(`['’]`)
 	onlyNumbers   = regexp.MustCompile(`^[0-9,.]+$`)
 	domainPattern = regexp.MustCompile(`(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])+`)
+	padding       = []rune{'$'}
 )
 
 func isMn(r rune) bool {
@@ -95,6 +96,18 @@ func Shingles(tokens []string) (result []string) {
 		}
 	}
 	sort.Strings(result)
+	return
+}
+
+// CharacterTrigrams returns a slice of character trigrams padded with '$'
+func CharacterTrigrams(token string) (result []string) {
+	if len(token) == 0 {
+		return
+	}
+	padded := append(padding, append([]rune(token), padding...)...)
+	for i := 0; i < len(padded)-2; i++ {
+		result = append(result, string(padded[i:i+3]))
+	}
 	return
 }
 
