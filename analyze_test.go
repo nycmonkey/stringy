@@ -131,7 +131,7 @@ func TestURLAnalyze(t *testing.T) {
 	}
 }
 
-var characterTrigramTests = []testpair{
+var paddedCharacterTrigramTests = []testpair{
 	{"dog", []string{"$do", "dog", "og$"}},
 	{"dogs", []string{"$do", "dog", "ogs", "gs$"}},
 	{"do", []string{"$do", "do$"}},
@@ -143,6 +143,31 @@ var characterTrigramTests = []testpair{
 	{"AAPL", []string{"$AA", "AAP", "APL", "PL$"}},
 }
 
+func TestPaddedCharacterTrigrams(t *testing.T) {
+	for _, pair := range paddedCharacterTrigramTests {
+		got := PaddedCharacterTrigrams(pair.input)
+		if !reflect.DeepEqual(got, pair.output) {
+			t.Error(
+				"For", pair.input,
+				"expected", pair.output,
+				"got", got,
+			)
+		}
+	}
+}
+
+var characterTrigramTests = []testpair{
+	{"dog", []string{"dog"}},
+	{"dogs", []string{"dog", "ogs"}},
+	{"do", []string{"do"}},
+	{"", nil},
+	{"d", []string{"d"}},
+	{"the_band", []string{"the", "he_", "e_b", "_ba", "ban", "and"}},
+	{"lucky 7", []string{"luc", "uck", "cky", "ky ", "y 7"}},
+	{"T", []string{"T"}},
+	{"AAPL", []string{"AAP", "APL"}},
+}
+
 func TestCharacterTrigrams(t *testing.T) {
 	for _, pair := range characterTrigramTests {
 		got := CharacterTrigrams(pair.input)
@@ -152,6 +177,44 @@ func TestCharacterTrigrams(t *testing.T) {
 				"expected", pair.output,
 				"got", got,
 			)
+		}
+	}
+}
+
+var bigramTests = []ngramTestPair{
+	{[]string{""}, []string{""}},
+	{[]string{"jonathan"}, []string{"jonathan"}},
+	{[]string{"jonathan", "summer"}, []string{"jonathan_summer"}},
+	{[]string{"jonathan", "ari", "summer"}, []string{"ari_summer", "jonathan_ari"}},
+	{[]string{"a", "b", "c", "d"}, []string{"a_b", "b_c", "c_d"}},
+	{[]string{}, []string{}},
+}
+
+func TestBigrams(t *testing.T) {
+	for _, pair := range bigramTests {
+		got := Bigrams(pair.input)
+		if len(got) != len(pair.output) {
+			t.Error(
+				"For", pair.input,
+				"expected", pair.output,
+				"got", got,
+			)
+		}
+		for i, want := range pair.output {
+			if len(got) <= i {
+				t.Fatal(
+					"For", pair.input,
+					"expected", pair.output,
+					"got", got,
+				)
+			}
+			if got[i] != want {
+				t.Error(
+					"For", pair.input,
+					"expected", pair.output,
+					"got", got,
+				)
+			}
 		}
 	}
 }

@@ -99,14 +99,28 @@ func Shingles(tokens []string) (result []string) {
 	return
 }
 
-// CharacterTrigrams returns a slice of character trigrams padded with '$'
-func CharacterTrigrams(token string) (result []string) {
+// PaddedCharacterTrigrams returns a slice of character trigrams padded with '$'
+func PaddedCharacterTrigrams(token string) (result []string) {
 	if len(token) == 0 {
 		return
 	}
 	padded := append(padding, append([]rune(token), padding...)...)
 	for i := 0; i < len(padded)-2; i++ {
 		result = append(result, string(padded[i:i+3]))
+	}
+	return
+}
+
+// CharacterTrigrams returns a slice of character trigrams without padding
+func CharacterTrigrams(token string) (result []string) {
+	if len(token) == 0 {
+		return
+	}
+	if len(token) < 4 {
+		return []string{token}
+	}
+	for i := 0; i < len(token)-2; i++ {
+		result = append(result, token[i:i+3])
 	}
 	return
 }
@@ -189,8 +203,8 @@ func Bigrams(tokens []string) (bigrams sort.StringSlice) {
 	case 2:
 		return []string{tokens[0] + "_" + tokens[1]}
 	}
-	for i := 1; i < len(tokens); i++ {
-		token := tokens[i-1] + "_" + tokens[i]
+	for i := 0; i < len(tokens)-1; i++ {
+		token := tokens[i] + "_" + tokens[i+1]
 		l := len(bigrams)
 		if l == 0 {
 			bigrams = append(bigrams, token)
@@ -202,7 +216,8 @@ func Bigrams(tokens []string) (bigrams sort.StringSlice) {
 			continue
 		}
 		if idx == l {
-			return append(bigrams, token)
+			bigrams = append(bigrams, token)
+			continue
 		}
 		bigrams = append(bigrams, "")
 		copy(bigrams[idx+1:], bigrams[idx:])
