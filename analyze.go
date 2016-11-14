@@ -39,7 +39,6 @@ func Analyze(in string) (tokens []string) {
 			fmt.Fprintln(os.Stderr, "Offending input:", in)
 		}
 	}()
-	tokens = make([]string, 0)
 	for _, t := range strings.Fields(in) {
 		t2 := punctuation.ReplaceAllString(t, "")
 		if len(t2) < 1 {
