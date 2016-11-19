@@ -131,56 +131,6 @@ func TestURLAnalyze(t *testing.T) {
 	}
 }
 
-var paddedCharacterTrigramTests = []testpair{
-	{"dog", []string{"$do", "dog", "og$"}},
-	{"dogs", []string{"$do", "dog", "ogs", "gs$"}},
-	{"do", []string{"$do", "do$"}},
-	{"", nil},
-	{"d", []string{"$d$"}},
-	{"the_band", []string{"$th", "the", "he_", "e_b", "_ba", "ban", "and", "nd$"}},
-	{"lucky 7", []string{"$lu", "luc", "uck", "cky", "ky ", "y 7", " 7$"}},
-	{"T", []string{"$T$"}},
-	{"AAPL", []string{"$AA", "AAP", "APL", "PL$"}},
-}
-
-func TestPaddedCharacterTrigrams(t *testing.T) {
-	for _, pair := range paddedCharacterTrigramTests {
-		got := PaddedCharacterTrigrams(pair.input)
-		if !reflect.DeepEqual(got, pair.output) {
-			t.Error(
-				"For", pair.input,
-				"expected", pair.output,
-				"got", got,
-			)
-		}
-	}
-}
-
-var characterTrigramTests = []testpair{
-	{"dog", []string{"dog"}},
-	{"dogs", []string{"dog", "ogs"}},
-	{"do", []string{"do"}},
-	{"", nil},
-	{"d", []string{"d"}},
-	{"the_band", []string{"the", "he_", "e_b", "_ba", "ban", "and"}},
-	{"lucky 7", []string{"luc", "uck", "cky", "ky ", "y 7"}},
-	{"T", []string{"T"}},
-	{"AAPL", []string{"AAP", "APL"}},
-}
-
-func TestCharacterTrigrams(t *testing.T) {
-	for _, pair := range characterTrigramTests {
-		got := CharacterTrigrams(pair.input)
-		if !reflect.DeepEqual(got, pair.output) {
-			t.Error(
-				"For", pair.input,
-				"expected", pair.output,
-				"got", got,
-			)
-		}
-	}
-}
-
 var bigramTests = []ngramTestPair{
 	{[]string{""}, []string{""}},
 	{[]string{"jonathan"}, []string{"jonathan"}},
@@ -218,3 +168,13 @@ func TestBigrams(t *testing.T) {
 		}
 	}
 }
+
+func benchmarkAnalyze(s string, b *testing.B) {
+	for n := 0; n < b.N; n++ {
+		Analyze(s)
+	}
+}
+
+func BenchmarkAnalyzeDiacritic(b *testing.B) { benchmarkAnalyze("Société Générale", b) }
+func BenchmarkAnalyzeAscii(b *testing.B)     { benchmarkAnalyze("Holy Moly #7!", b) }
+func BenchmarkAnalyzeNonLatin(b *testing.B)  { benchmarkAnalyze("תל אביב-יפו", b) }

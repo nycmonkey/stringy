@@ -1,6 +1,7 @@
 package stringy
 
 import (
+	"bytes"
 	"fmt"
 	"net"
 	"net/url"
@@ -11,7 +12,7 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	"github.com/fiam/gounidecode/unidecode"
+	"github.com/rainycape/unidecode"
 
 	"golang.org/x/text/transform"
 	"golang.org/x/text/unicode/norm"
@@ -25,6 +26,7 @@ var (
 	onlyNumbers   = regexp.MustCompile(`^[0-9,.]+$`)
 	domainPattern = regexp.MustCompile(`(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])+`)
 	padding       = []rune{'$'}
+	emptyBlice    = []byte{}
 )
 
 func isMn(r rune) bool {
@@ -39,20 +41,20 @@ func Analyze(in string) (tokens []string) {
 			fmt.Fprintln(os.Stderr, "Offending input:", in)
 		}
 	}()
-	f := strings.Fields(in)
+	f := bytes.Fields([]byte(in))
 	tokens = make([]string, 0, len(f))
 	for _, t := range f {
-		t2 := punctuation.ReplaceAllString(t, "")
+		t2 := punctuation.ReplaceAll(t, emptyBlice)
 		if len(t2) < 1 {
 			continue
 		}
-		if len(t2) == utf8.RuneCountInString(t2) {
-			tokens = append(tokens, strings.ToLower(t2))
+		if len(t2) == utf8.RuneCount(t2) {
+			tokens = append(tokens, string(bytes.ToLower(t2)))
 			continue
 		}
 		var normalization = transform.Chain(norm.NFD, transform.RemoveFunc(isMn), norm.NFC)
-		t3, _, _ := transform.String(normalization, t2)
-		tokens = append(tokens, strings.ToLower(unidecode.Unidecode(t3)))
+		t3, _, _ := transform.Bytes(normalization, t2)
+		tokens = append(tokens, strings.ToLower(unidecode.Unidecode(string(t3))))
 	}
 	return
 }
@@ -97,32 +99,6 @@ func Shingles(tokens []string) (result []string) {
 		}
 	}
 	sort.Strings(result)
-	return
-}
-
-// PaddedCharacterTrigrams returns a slice of character trigrams padded with '$'
-func PaddedCharacterTrigrams(token string) (result []string) {
-	if len(token) == 0 {
-		return
-	}
-	padded := append(padding, append([]rune(token), padding...)...)
-	for i := 0; i < len(padded)-2; i++ {
-		result = append(result, string(padded[i:i+3]))
-	}
-	return
-}
-
-// CharacterTrigrams returns a slice of character trigrams without padding
-func CharacterTrigrams(token string) (result []string) {
-	if len(token) == 0 {
-		return
-	}
-	if len(token) < 4 {
-		return []string{token}
-	}
-	for i := 0; i < len(token)-2; i++ {
-		result = append(result, token[i:i+3])
-	}
 	return
 }
 

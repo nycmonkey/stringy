@@ -2,12 +2,11 @@
 	"version": 0,
 	"dependencies": [
 		{
-			"importpath": "github.com/fiam/gounidecode/unidecode",
-			"repository": "https://github.com/fiam/gounidecode",
+			"importpath": "github.com/rainycape/unidecode",
+			"repository": "https://github.com/rainycape/unidecode",
 			"vcs": "git",
-			"revision": "8deddbd03fec2c28969266e52f27b6fb22be1823",
+			"revision": "cb7f23ec59bec0d61b19c56cd88cee3d0cc1870c",
 			"branch": "master",
-			"path": "/unidecode",
 			"notests": true
 		},
 		{
