@@ -15,6 +15,11 @@ type ngramTestPair struct {
 	output []string
 }
 
+type bytesTestPair struct {
+	input  []byte
+	output [][]byte
+}
+
 var analyzeTests = []testpair{
 	{"Jonathan", []string{"jonathan"}},
 	{"Jonathan Summer", []string{"jonathan", "summer"}},
@@ -31,6 +36,27 @@ var analyzeTests = []testpair{
 func TestAnalyze(t *testing.T) {
 	for _, pair := range analyzeTests {
 		got := Analyze(pair.input)
+		if !reflect.DeepEqual(got, pair.output) {
+			t.Error(
+				"For", pair.input,
+				"expected", pair.output,
+				"got", got,
+			)
+		}
+	}
+}
+
+var analyzeBytesTests = []bytesTestPair{
+	{[]byte("Jonathan"), [][]byte{[]byte("jonathan")}},
+	{[]byte("Jonathan Summer"), [][]byte{[]byte("jonathan"), []byte("summer")}},
+	{[]byte("žůžo"), [][]byte{[]byte("zuzo")}},
+	{[]byte("Société Générale"), [][]byte{[]byte("societe"), []byte("generale")}},
+	{[]byte("über Spaß"), [][]byte{[]byte("uber"), []byte("spass")}},
+}
+
+func TestAnalyzeBytes(t *testing.T) {
+	for _, pair := range analyzeBytesTests {
+		got := AnalyzeBytes(pair.input)
 		if !reflect.DeepEqual(got, pair.output) {
 			t.Error(
 				"For", pair.input,
@@ -170,6 +196,7 @@ func TestBigrams(t *testing.T) {
 }
 
 func benchmarkAnalyze(s string, b *testing.B) {
+	b.ReportAllocs()
 	for n := 0; n < b.N; n++ {
 		Analyze(s)
 	}
@@ -178,3 +205,18 @@ func benchmarkAnalyze(s string, b *testing.B) {
 func BenchmarkAnalyzeDiacritic(b *testing.B) { benchmarkAnalyze("Société Générale", b) }
 func BenchmarkAnalyzeAscii(b *testing.B)     { benchmarkAnalyze("Holy Moly #7!", b) }
 func BenchmarkAnalyzeNonLatin(b *testing.B)  { benchmarkAnalyze("תל אביב-יפו", b) }
+
+func benchmarkAnalyzeBytes(s []byte, b *testing.B) {
+	b.ReportAllocs()
+	for n := 0; n < b.N; n++ {
+		AnalyzeBytes(s)
+	}
+}
+
+func BenchmarkAnalyzeBytesDiacritic(b *testing.B) {
+	benchmarkAnalyzeBytes([]byte("Société Générale"), b)
+}
+func BenchmarkAnalyzeBytesAscii(b *testing.B) { benchmarkAnalyzeBytes([]byte("Holy Moly #7!"), b) }
+func BenchmarkAnalyzeBytesNonLatin(b *testing.B) {
+	benchmarkAnalyzeBytes([]byte("תל אביב-יפו"), b)
+}

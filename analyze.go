@@ -25,7 +25,6 @@ var (
 	apostrophes   = regexp.MustCompile(`['’]`)
 	onlyNumbers   = regexp.MustCompile(`^[0-9,.]+$`)
 	domainPattern = regexp.MustCompile(`(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])+`)
-	padding       = []rune{'$'}
 	emptyBlice    = []byte{}
 )
 
@@ -53,8 +52,34 @@ func Analyze(in string) (tokens []string) {
 			continue
 		}
 		var normalization = transform.Chain(norm.NFD, transform.RemoveFunc(isMn), norm.NFC)
-		t3, _, _ := transform.Bytes(normalization, t2)
+		t3, _, err := transform.Bytes(normalization, t2)
+		if err != nil {
+			continue
+		}
 		tokens = append(tokens, strings.ToLower(unidecode.Unidecode(string(t3))))
+	}
+	return
+}
+
+// AnalyzeBytes normalizes and tokenizes a given input stream
+func AnalyzeBytes(in []byte) (tokens [][]byte) {
+	f := bytes.Fields(in)
+	tokens = make([][]byte, 0, len(f))
+	for _, t := range f {
+		t2 := punctuation.ReplaceAll(t, emptyBlice)
+		if len(t2) < 1 {
+			continue
+		}
+		if len(t2) == utf8.RuneCount(t2) {
+			tokens = append(tokens, bytes.ToLower(t2))
+			continue
+		}
+		var normalization = transform.Chain(norm.NFD, transform.RemoveFunc(isMn), norm.NFC)
+		t3, _, err := transform.Bytes(normalization, t2)
+		if err != nil {
+			continue
+		}
+		tokens = append(tokens, bytes.ToLower([]byte(unidecode.Unidecode(string(t3)))))
 	}
 	return
 }
