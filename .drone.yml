@@ -1,0 +1,10 @@
+image: nycmonkey/drone-golang-container
+env:
+  - GOPATH=/var/cache/drone
+script:
+  - go build -v ./...
+  - go test -v
+notify:
+  email:
+    recipients:
+      - nycmonkey@gmail.com

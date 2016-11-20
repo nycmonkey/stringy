@@ -13,25 +13,16 @@
 			"importpath": "golang.org/x/text/internal/gen",
 			"repository": "https://go.googlesource.com/text",
 			"vcs": "git",
-			"revision": "0a5a09ee4409a616bfa03115120f0bffacdff508",
+			"revision": "a263ba8db058568bb9beba166777d9c9dbe75d68",
 			"branch": "master",
 			"path": "internal/gen",
-			"notests": true
-		},
-		{
-			"importpath": "golang.org/x/text/internal/testtext",
-			"repository": "https://go.googlesource.com/text",
-			"vcs": "git",
-			"revision": "0a5a09ee4409a616bfa03115120f0bffacdff508",
-			"branch": "master",
-			"path": "internal/testtext",
 			"notests": true
 		},
 		{
 			"importpath": "golang.org/x/text/internal/triegen",
 			"repository": "https://go.googlesource.com/text",
 			"vcs": "git",
-			"revision": "0a5a09ee4409a616bfa03115120f0bffacdff508",
+			"revision": "a263ba8db058568bb9beba166777d9c9dbe75d68",
 			"branch": "master",
 			"path": "internal/triegen",
 			"notests": true
@@ -40,7 +31,7 @@
 			"importpath": "golang.org/x/text/internal/ucd",
 			"repository": "https://go.googlesource.com/text",
 			"vcs": "git",
-			"revision": "0a5a09ee4409a616bfa03115120f0bffacdff508",
+			"revision": "a263ba8db058568bb9beba166777d9c9dbe75d68",
 			"branch": "master",
 			"path": "internal/ucd",
 			"notests": true
@@ -49,7 +40,7 @@
 			"importpath": "golang.org/x/text/transform",
 			"repository": "https://go.googlesource.com/text",
 			"vcs": "git",
-			"revision": "0a5a09ee4409a616bfa03115120f0bffacdff508",
+			"revision": "a263ba8db058568bb9beba166777d9c9dbe75d68",
 			"branch": "master",
 			"path": "/transform",
 			"notests": true
@@ -58,7 +49,7 @@
 			"importpath": "golang.org/x/text/unicode/cldr",
 			"repository": "https://go.googlesource.com/text",
 			"vcs": "git",
-			"revision": "0a5a09ee4409a616bfa03115120f0bffacdff508",
+			"revision": "a263ba8db058568bb9beba166777d9c9dbe75d68",
 			"branch": "master",
 			"path": "unicode/cldr",
 			"notests": true
@@ -67,9 +58,9 @@
 			"importpath": "golang.org/x/text/unicode/norm",
 			"repository": "https://go.googlesource.com/text",
 			"vcs": "git",
-			"revision": "0a5a09ee4409a616bfa03115120f0bffacdff508",
+			"revision": "a263ba8db058568bb9beba166777d9c9dbe75d68",
 			"branch": "master",
-			"path": "unicode/norm",
+			"path": "/unicode/norm",
 			"notests": true
 		}
 	]
