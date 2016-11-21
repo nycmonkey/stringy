@@ -127,6 +127,48 @@ func Shingles(tokens []string) (result []string) {
 	return
 }
 
+// VisitShingles calls the supplied visit function once per shingle, stopping if the
+// visit function returns true
+func VisitShingles(tokens [][]byte, visit func(b []byte) (stop bool)) {
+	if len(tokens) == 0 {
+		return
+	}
+	if len(tokens) == 1 {
+		visit(tokens[0])
+		return
+	}
+	for shingleLen := 1; shingleLen <= len(tokens); shingleLen++ {
+		for startIdx := 0; startIdx <= len(tokens)-shingleLen; startIdx++ {
+			if visit(bytes.Join(tokens[startIdx:startIdx+shingleLen], []byte("_"))) {
+				return
+			}
+		}
+	}
+	return
+}
+
+// VisitAnalyzedShingles applies the provided tokenizer to the input and then
+// calls the supplied visit function for each shingle of the tokenized input.  If input
+// is an empty byte slice, the function returns immediately
+func VisitAnalyzedShingles(input []byte, tokenizer func(b []byte) [][]byte, visit func(b []byte) (stop bool)) {
+	if len(input) == 0 {
+		return
+	}
+	tokens := tokenizer(input)
+	if len(tokens) == 1 {
+		visit(tokens[0])
+		return
+	}
+	for shingleLen := 1; shingleLen <= len(tokens); shingleLen++ {
+		for startIdx := 0; startIdx <= len(tokens)-shingleLen; startIdx++ {
+			if visit(bytes.Join(tokens[startIdx:startIdx+shingleLen], []byte("_"))) {
+				return
+			}
+		}
+	}
+	return
+}
+
 func hostByRegex(in string) []string {
 	m := domainPattern.FindAllString(in, 1)
 	if len(m) == 0 {
