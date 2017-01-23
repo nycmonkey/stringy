@@ -2,63 +2,31 @@
 	"version": 0,
 	"dependencies": [
 		{
-			"importpath": "github.com/rainycape/unidecode",
-			"repository": "https://github.com/rainycape/unidecode",
-			"vcs": "git",
-			"revision": "cb7f23ec59bec0d61b19c56cd88cee3d0cc1870c",
+			"importpath": "github.com/mattn/go-isatty",
+			"repository": "https://github.com/mattn/go-isatty",
+			"revision": "30a891c33c7cde7b02a981314b4228ec99380cca",
 			"branch": "master",
 			"notests": true
 		},
 		{
-			"importpath": "golang.org/x/text/internal/gen",
-			"repository": "https://go.googlesource.com/text",
-			"vcs": "git",
-			"revision": "a263ba8db058568bb9beba166777d9c9dbe75d68",
+			"importpath": "github.com/mozillazg/go-unidecode",
+			"repository": "https://github.com/mozillazg/go-unidecode",
+			"revision": "8772af720c7f2f4d216cc73c5f23de17450dd008",
 			"branch": "master",
-			"path": "internal/gen",
-			"notests": true
-		},
-		{
-			"importpath": "golang.org/x/text/internal/triegen",
-			"repository": "https://go.googlesource.com/text",
-			"vcs": "git",
-			"revision": "a263ba8db058568bb9beba166777d9c9dbe75d68",
-			"branch": "master",
-			"path": "internal/triegen",
-			"notests": true
-		},
-		{
-			"importpath": "golang.org/x/text/internal/ucd",
-			"repository": "https://go.googlesource.com/text",
-			"vcs": "git",
-			"revision": "a263ba8db058568bb9beba166777d9c9dbe75d68",
-			"branch": "master",
-			"path": "internal/ucd",
 			"notests": true
 		},
 		{
 			"importpath": "golang.org/x/text/transform",
 			"repository": "https://go.googlesource.com/text",
-			"vcs": "git",
-			"revision": "a263ba8db058568bb9beba166777d9c9dbe75d68",
+			"revision": "11dbc599981ccdf4fb18802a28392a8bcf7a9395",
 			"branch": "master",
 			"path": "/transform",
 			"notests": true
 		},
 		{
-			"importpath": "golang.org/x/text/unicode/cldr",
-			"repository": "https://go.googlesource.com/text",
-			"vcs": "git",
-			"revision": "a263ba8db058568bb9beba166777d9c9dbe75d68",
-			"branch": "master",
-			"path": "unicode/cldr",
-			"notests": true
-		},
-		{
 			"importpath": "golang.org/x/text/unicode/norm",
 			"repository": "https://go.googlesource.com/text",
-			"vcs": "git",
-			"revision": "a263ba8db058568bb9beba166777d9c9dbe75d68",
+			"revision": "11dbc599981ccdf4fb18802a28392a8bcf7a9395",
 			"branch": "master",
 			"path": "/unicode/norm",
 			"notests": true

@@ -12,7 +12,7 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	"github.com/rainycape/unidecode"
+	"github.com/mozillazg/go-unidecode"
 
 	"golang.org/x/text/transform"
 	"golang.org/x/text/unicode/norm"
