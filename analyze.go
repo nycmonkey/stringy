@@ -237,6 +237,27 @@ func UnigramsAndBigrams(tokens []string) (ngrams []string) {
 	return
 }
 
+// TokenTrigrams turns an input like "abcd" into a series of trigrams like ("abc", "bcd")
+// If the input is empty, the result is empty; if the input is 1 or two characters, the output
+// is padded with '$'
+func TokenTrigrams(in string) (trigrams []string) {
+	switch len(in) {
+	case 0:
+		return
+	case 1:
+		return []string{"$$" + in}
+	case 2:
+		return []string{"$" + in}
+	case 3:
+		return []string{in}
+	}
+	trigrams = make([]string, 0, len(in)-2)
+	for i := 0; i < len(in)-2; i++ {
+		trigrams = append(trigrams, in[i:i+3])
+	}
+	return
+}
+
 // Bigrams returns the unique token bigrams for a given ordered list of string tokens
 func Bigrams(tokens []string) (bigrams sort.StringSlice) {
 	switch len(tokens) {

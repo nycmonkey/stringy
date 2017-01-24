@@ -116,6 +116,28 @@ func TestUnigramsAndBigrams(t *testing.T) {
 	}
 }
 
+var tokenTrigramsTests = []testpair{
+	{"a", []string{"$$a"}},
+	{"ab", []string{"$ab"}},
+	{"abc", []string{"abc"}},
+	{"abcd", []string{"abc", "bcd"}},
+	{"", nil},
+	{" ", []string{"$$ "}},
+}
+
+func TestTokenTrigrams(t *testing.T) {
+	for _, pair := range tokenTrigramsTests {
+		got := TokenTrigrams(pair.input)
+		if !reflect.DeepEqual(got, pair.output) {
+			t.Error(
+				"For", pair.input,
+				"expected", pair.output,
+				"got", got,
+			)
+		}
+	}
+}
+
 var shingleTests = []ngramTestPair{
 	{[]string{"jonathan"}, []string{"jonathan"}},
 	{[]string{"jonathan", "summer"}, []string{"jonathan", "jonathan_summer", "summer"}},
