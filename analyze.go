@@ -14,6 +14,7 @@ import (
 
 	"github.com/mozillazg/go-unidecode"
 
+	mapset "github.com/deckarep/golang-set"
 	"golang.org/x/text/transform"
 	"golang.org/x/text/unicode/norm"
 )
@@ -240,20 +241,21 @@ func UnigramsAndBigrams(tokens []string) (ngrams []string) {
 // TokenTrigrams turns an input like "abcd" into a series of trigrams like ("abc", "bcd")
 // If the input is empty, the result is empty; if the input is 1 or two characters, the output
 // is padded with '$'
-func TokenTrigrams(in string) (trigrams []string) {
-	switch len(in) {
-	case 0:
+func TokenNGrams(in string, ln int) (ngrams []string) {
+	if len(in) < 1 {
 		return
-	case 1:
-		return []string{"$$" + in}
-	case 2:
-		return []string{"$" + in}
-	case 3:
-		return []string{in}
 	}
-	trigrams = make([]string, 0, len(in)-2)
-	for i := 0; i < len(in)-2; i++ {
-		trigrams = append(trigrams, in[i:i+3])
+	if ln < 1 {
+		return
+	}
+	outLn := len(in)
+	// add padding to support prefix matching
+	for i := 1; i < ln; i++ {
+		in = "$" + in
+	}
+	ngrams = make([]string, 0, len(in))
+	for i := 0; i < outLn; i++ {
+		ngrams = append(ngrams, in[i:i+ln])
 	}
 	return
 }
@@ -289,4 +291,27 @@ func Bigrams(tokens []string) (bigrams sort.StringSlice) {
 		bigrams[idx] = token
 	}
 	return
+}
+
+// NGramSimilarity calculates the Jaccard similarity of the token ngrams of two input strings
+func NGramSimilarity(a string, b string, ngramLen int) float64 {
+	if a == b {
+		return 1.0
+	}
+
+	s1 := mapset.NewSet()
+	for _, ng := range TokenNGrams(a, ngramLen) {
+		s1.Add(ng)
+	}
+	if s1.Cardinality() < 1 {
+		return 0
+	}
+	s2 := mapset.NewSet()
+	for _, ng := range TokenNGrams(b, ngramLen) {
+		s2.Add(ng)
+	}
+	if s2.Cardinality() < 1 {
+		return 0
+	}
+	return float64(s1.Intersect(s2).Cardinality()) / float64(s1.Union(s2).Cardinality())
 }

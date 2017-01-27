@@ -116,22 +116,36 @@ func TestUnigramsAndBigrams(t *testing.T) {
 	}
 }
 
-var tokenTrigramsTests = []testpair{
-	{"a", []string{"$$a"}},
-	{"ab", []string{"$ab"}},
-	{"abc", []string{"abc"}},
-	{"abcd", []string{"abc", "bcd"}},
-	{"", nil},
-	{" ", []string{"$$ "}},
+type nGramTest struct {
+	s   string
+	ln  int
+	out []string
 }
 
-func TestTokenTrigrams(t *testing.T) {
-	for _, pair := range tokenTrigramsTests {
-		got := TokenTrigrams(pair.input)
-		if !reflect.DeepEqual(got, pair.output) {
+var tokenNGramTests = []nGramTest{
+	{"a", 2, []string{"$a"}},
+	{"a", 3, []string{"$$a"}},
+	{"ab", 2, []string{"$a", "ab"}},
+	{"ab", 3, []string{"$$a", "$ab"}},
+	{"abc", 2, []string{"$a", "ab", "bc"}},
+	{"abc", 3, []string{"$$a", "$ab", "abc"}},
+	{"abcd", 2, []string{"$a", "ab", "bc", "cd"}},
+	{"abcd", 3, []string{"$$a", "$ab", "abc", "bcd"}},
+	{"", 2, nil},
+	{"", 3, nil},
+	{" ", 3, []string{"$$ "}},
+	{"abcd", -1, nil},
+	{"abcd", 0, nil},
+	{"abcd", 1, []string{"a", "b", "c", "d"}},
+}
+
+func TestTokenNGrams(t *testing.T) {
+	for _, tst := range tokenNGramTests {
+		got := TokenNGrams(tst.s, tst.ln)
+		if !reflect.DeepEqual(got, tst.out) {
 			t.Error(
-				"For", pair.input,
-				"expected", pair.output,
+				"For", tst.s, tst.ln,
+				"expected", tst.out,
 				"got", got,
 			)
 		}
@@ -213,6 +227,32 @@ func TestBigrams(t *testing.T) {
 					"got", got,
 				)
 			}
+		}
+	}
+}
+
+type nGramSimilarityTest struct {
+	s1, s2     string
+	nGramLen   int
+	similarity float64
+}
+
+var NGramSimilarityTests = []nGramSimilarityTest{
+	{"", "", 2, 1.0},
+	{"", "a", 2, 0},
+	{"foo", "foo", 2, 1.0},
+	{"foo", "arg", 2, 0.0},
+}
+
+func TestNGramSimilarity(t *testing.T) {
+	for _, tst := range NGramSimilarityTests {
+		got := NGramSimilarity(tst.s1, tst.s2, tst.nGramLen)
+		if got != tst.similarity {
+			t.Error(
+				"For", tst.s1, tst.s2, tst.nGramLen,
+				"expected", tst.similarity,
+				"got", got,
+			)
 		}
 	}
 }

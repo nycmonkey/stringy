@@ -2,8 +2,17 @@
 	"version": 0,
 	"dependencies": [
 		{
+			"importpath": "github.com/deckarep/golang-set",
+			"repository": "https://github.com/deckarep/golang-set",
+			"vcs": "git",
+			"revision": "0c62f01318f81fb34e5ea393d2ec62141e9715e9",
+			"branch": "master",
+			"notests": true
+		},
+		{
 			"importpath": "github.com/mattn/go-isatty",
 			"repository": "https://github.com/mattn/go-isatty",
+			"vcs": "",
 			"revision": "30a891c33c7cde7b02a981314b4228ec99380cca",
 			"branch": "master",
 			"notests": true
@@ -11,6 +20,7 @@
 		{
 			"importpath": "github.com/mozillazg/go-unidecode",
 			"repository": "https://github.com/mozillazg/go-unidecode",
+			"vcs": "",
 			"revision": "8772af720c7f2f4d216cc73c5f23de17450dd008",
 			"branch": "master",
 			"notests": true
@@ -18,6 +28,7 @@
 		{
 			"importpath": "golang.org/x/text/transform",
 			"repository": "https://go.googlesource.com/text",
+			"vcs": "",
 			"revision": "11dbc599981ccdf4fb18802a28392a8bcf7a9395",
 			"branch": "master",
 			"path": "/transform",
@@ -26,6 +37,7 @@
 		{
 			"importpath": "golang.org/x/text/unicode/norm",
 			"repository": "https://go.googlesource.com/text",
+			"vcs": "",
 			"revision": "11dbc599981ccdf4fb18802a28392a8bcf7a9395",
 			"branch": "master",
 			"path": "/unicode/norm",
