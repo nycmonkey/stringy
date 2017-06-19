@@ -1,5 +1,6 @@
-build:
-  image: golang:1.8.3-alpine
-  commands:
-    - go build -v ./...
-    - go test -v -bench=.
+pipeline:
+  library:
+    image: golang:1.8.3-alpine
+    commands:
+      - go build -v ./...
+      - go test -v -bench=.
