@@ -182,6 +182,18 @@ func hostByRegex(in string) []string {
 	return []string{host}
 }
 
+func hostByRegexOrEmpty(in string) (host string) {
+	m := domainPattern.FindAllString(in, 1)
+	if len(m) == 0 {
+		return
+	}
+	host = trimWWWPrefix(m[0])
+	if !strings.Contains(host, ".") {
+		return ""
+	}
+	return
+}
+
 func trimWWWPrefix(in string) string {
 	return strings.TrimPrefix(in, "www.")
 }
@@ -214,6 +226,26 @@ func URLAnalyze(in string) (tokens []string) {
 		return
 	}
 	return
+}
+
+// URLAnalyze attempts to normalize a URL to a simple host name
+// or returns an empty string
+func URLAnalyzeOrEmpty(in string) (analyzed string) {
+	raw := strings.ToLower(strings.TrimSpace(in))
+	if len(raw) < 1 {
+		return
+	}
+	u, err := url.Parse(raw)
+	if err != nil || len(u.Host) < 1 {
+		// fallback to regex
+		return hostByRegexOrEmpty(raw)
+	}
+	host, _, err := net.SplitHostPort(u.Host)
+	if err != nil {
+		analyzed = strings.TrimPrefix(u.Host, "www.")
+		return
+	}
+	return strings.TrimPrefix(host, "www.")
 }
 
 // UnigramsAndBigrams returns the unique token unigrams and bigrams for a given ordered list of string tokens
