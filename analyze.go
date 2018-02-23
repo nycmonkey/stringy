@@ -27,6 +27,8 @@ var (
 	onlyNumbers   = regexp.MustCompile(`^[0-9,.]+$`)
 	domainPattern = regexp.MustCompile(`(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\-]*[a-zA-Z0-9])\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\-]*[A-Za-z0-9])+`)
 	emptyBlice    = []byte{}
+	spaceBlice    = []byte(" ")
+	placeholder   = []byte("qlqlql")
 )
 
 func isMn(r rune) bool {
@@ -107,6 +109,31 @@ func MSAnalyze(in string) (tokens []string) {
 	tokens = make([]string, 0)
 	for _, t := range strings.Fields(in) {
 		tokens = append(tokens, strings.ToLower(t))
+	}
+	return
+}
+
+// MSAnalyzeBytes normalizes and tokenizes a given input according to rules reverse engineered to match
+// what MS SQL Server full text indexer does
+func MSAnalyzeBytes(in []byte) (tokens [][]byte) {
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Fprintln(os.Stderr, "RECOVERED FROM", r)
+			fmt.Fprintln(os.Stderr, "Offending input:", in)
+		}
+	}()
+	for _, abbr := range abbreviation.FindAll(in, -1) {
+		abbrSansPeriods := punctuation.ReplaceAll(abbr, emptyBlice)
+		in = bytes.Replace(in, abbr, abbrSansPeriods, -1)
+	}
+	for _, quotation := range possessives.FindAll(in, -1) {
+		tempSub := apostrophes.ReplaceAll(quotation, placeholder)
+		in = bytes.Replace(in, quotation, tempSub, -1)
+	}
+	in = punctuation.ReplaceAll(in, spaceBlice)
+	in = bytes.Replace(in, placeholder, []byte(`'`), -1)
+	for _, t := range bytes.Fields(in) {
+		tokens = append(tokens, bytes.ToLower(t))
 	}
 	return
 }
@@ -228,7 +255,7 @@ func URLAnalyze(in string) (tokens []string) {
 	return
 }
 
-// URLAnalyze attempts to normalize a URL to a simple host name
+// URLAnalyzeOrEmpty attempts to normalize a URL to a simple host name
 // or returns an empty string
 func URLAnalyzeOrEmpty(in string) (analyzed string) {
 	raw := strings.ToLower(strings.TrimSpace(in))
@@ -270,7 +297,7 @@ func UnigramsAndBigrams(tokens []string) (ngrams []string) {
 	return
 }
 
-// TokenTrigrams turns an input like "abcd" into a series of trigrams like ("abc", "bcd")
+// TokenNGrams turns an input like "abcd" into a series of trigrams like ("abc", "bcd")
 // If the input is empty, the result is empty; if the input is 1 or two characters, the output
 // is padded with '$'
 func TokenNGrams(in string, ln int) (ngrams []string) {
