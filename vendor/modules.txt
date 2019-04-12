@@ -1,0 +1,8 @@
+# github.com/deckarep/golang-set v0.0.0-20161213184500-0c62f01318f8
+github.com/deckarep/golang-set
+# github.com/mozillazg/go-unidecode v0.0.0-20161107135901-8772af720c7f
+github.com/mozillazg/go-unidecode
+github.com/mozillazg/go-unidecode/table
+# golang.org/x/text v0.0.0-20170117123646-11dbc599981c
+golang.org/x/text/transform
+golang.org/x/text/unicode/norm

@@ -1,0 +1,6 @@
+github.com/deckarep/golang-set v0.0.0-20161213184500-0c62f01318f8 h1:MJsz8cmw/EbpJhGeE4SJy/2dJNwu1gqAnz2LrsqrwiQ=
+github.com/deckarep/golang-set v0.0.0-20161213184500-0c62f01318f8/go.mod h1:93vsz/8Wt4joVM7c2AVqh+YRMiUSc14yDtF28KmMOgQ=
+github.com/mozillazg/go-unidecode v0.0.0-20161107135901-8772af720c7f h1:sxYk9RVewZT9qB4U6JruHx6fbd7Jbu6BqbpDhz0By38=
+github.com/mozillazg/go-unidecode v0.0.0-20161107135901-8772af720c7f/go.mod h1:fYMdhyjni9ZeEmS6OE/GJHDLsF8TQvIVDwYR/drR26Q=
+golang.org/x/text v0.0.0-20170117123646-11dbc599981c h1:Rj9PFQoguQfms0jOhkwNVuwmoHv/4pZzugFcOvnbzxM=
+golang.org/x/text v0.0.0-20170117123646-11dbc599981c/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
